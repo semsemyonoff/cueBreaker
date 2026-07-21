@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- Write notes for the next release here. "Cut release" promotes this
      section to ## [X.Y.Z] - <date> and uses it as the release body. -->
 
+## [0.1.0] - 2026-07-21
+
 First release of **cueBreaker** — a web UI for splitting single-file FLAC albums
 into tagged per-track files using their CUE sheets. Point it at a folder of CD
 images (one big `.flac` plus a `.cue`), pick an album, and split it; the source
@@ -50,3 +52,4 @@ on the host.
   artist and track names survive the split.
 - **Runs as your user** — the library is mounted read-only and the split tracks
   are written under your own UID/GID, not root's.
+
