@@ -18,9 +18,9 @@ into tagged per-track files using their CUE sheets. Point it at a folder of CD
 images (one big `.flac` plus a `.cue`), pick an album, and split it; the source
 files are never modified.
 
-Ships as a single multi-arch image (linux/amd64 + linux/arm64) bundling the Go
-API, the pre-built SPA, and the splitter toolchain (shntool 3.0.10, cuetools,
-FLAC).
+Ships as a single image for linux/amd64 and linux/arm64, with the splitter
+toolchain (shntool 3.0.10, cuetools, FLAC) already inside — nothing to install
+on the host.
 
 ### Added
 - **Library browser** — scans the input directory for albums that are still a
@@ -45,14 +45,8 @@ FLAC).
   skipped and why.
 - **Resumable splits** — reloading the page mid-split re-attaches to the running
   job and its log; album URLs are shareable and open in a new tab.
-- **Self-documenting API** — the JSON API is described by an OpenAPI 3.1 spec
-  served from the binary, with a Scalar reference at `/api/docs` (no CDN, works
-  on an isolated network).
-- **Deployment layer** — production `docker-compose.yml` and `.env.example` with
-  a read-only mount for your library, a release `Makefile`, and pinned
-  `backend`/`frontend` submodules built into one image.
-- **Self-contained multi-stage `Dockerfile`** (SPA build → static Go binary →
-  Debian runtime with the splitter tools) — the release image builds entirely
-  from this repo, with no dependency on the dev stack.
-- **Release CI** — the "Cut release" button builds the multi-arch image and
-  publishes it to Docker Hub and GHCR.
+- **CUE sheets in any encoding** — UTF-8 (with or without a BOM), Windows-1251,
+  Windows-1252, Shift-JIS, EUC-KR and Latin-1 are detected and read, so non-Latin
+  artist and track names survive the split.
+- **Runs as your user** — the library is mounted read-only and the split tracks
+  are written under your own UID/GID, not root's.
