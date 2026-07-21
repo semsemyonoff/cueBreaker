@@ -1,0 +1,36 @@
+# Production deployment for cueBreaker — the single published image
+# (semsemyonoff/cuebreaker) that bundles the Go API, the pre-built SPA, and the
+# splitter toolchain (shntool / cuetools / flac).
+#
+# This is the RUNTIME stack operators use to self-host. It pulls a tagged image
+# from the registry; it does NOT build anything (see the Makefile `release`
+# target for building/publishing from the pinned submodules).
+#
+# Quick start:
+#   cp .env.example .env   # then edit paths / port / tag
+#   docker compose up -d
+#   open http://localhost:${CUEBREAKER_HTTP_PORT}
+
+services:
+  cuebreaker:
+    image: "${CUEBREAKER_IMAGE:-semsemyonoff/cuebreaker}:${CUEBREAKER_TAG:-latest}"
+    container_name: cuebreaker
+    restart: unless-stopped
+    # Run as your own user so the split tracks land in /output owned by you and
+    # not by root. Both default to 1000, the usual first human account.
+    user: "${CUEBREAKER_UID:-1000}:${CUEBREAKER_GID:-1000}"
+    ports:
+      - "${CUEBREAKER_HTTP_PORT:-8080}:5000"
+    environment:
+      # Library of unsplit albums to scan, and where split tracks are written.
+      # These match the mounts below — change the host side in .env, not here.
+      CUEBREAKER_INPUT_DIR: /input
+      CUEBREAKER_OUTPUT_DIR: /output
+      TZ: "${TZ:-UTC}"
+    volumes:
+      # Your unsplit albums (one directory per album: a single FLAC + its CUE).
+      # Mounted READ-ONLY — cueBreaker never modifies the source material.
+      - "${CUEBREAKER_INPUT_PATH:-./input}:/input:ro"
+      # Where the split, tagged tracks are written. Must be writable by the
+      # UID/GID above.
+      - "${CUEBREAKER_OUTPUT_PATH:-./output}:/output"

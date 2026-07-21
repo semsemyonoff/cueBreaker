@@ -1,0 +1,21 @@
+# Keep the build context lean — the Dockerfile pulls only what it needs from the
+# backend/ and frontend/ submodules.
+**/.git
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+
+# Backend test fixtures and the placeholder SPA (the real one is built in stage 1).
+backend/testdata
+backend/web/dist
+
+# Repo furniture that never belongs in an image.
+assets
+.github
+.forgejo
+
+# Operator-local runtime dirs / secrets (never relevant to the image).
+.env
+/input/
+/output/
